@@ -41,6 +41,11 @@ restart: stop start.daemon ## Arrête et redémarre les conteneurs
 update:
 	$(EXEC) composer install
 
+# ===================== #
+# Mise à jour base de données #
+# ===================== #
+entity:
+	$(EXEC) $(CONSOLE) make:entity
 
 # ============= #
 # Vérifications #
