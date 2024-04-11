@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\hasDescriptionTrait;
+use App\Entity\Traits\hasIdTrait;
+use App\Entity\Traits\hasNameTrait;
 use App\Repository\RecipeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,22 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 class Recipe
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
-    #[ORM\Column(length: 128)]
-    private ?string $name = null;
-
-    #[ORM\Column(length: 128)]
-    private ?string $slug = null;
-
+    use hasIdTrait;
+    use hasNameTrait;
+    use hasDescriptionTrait;
     #[ORM\Column]
     private ?bool $draft = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $cooking = null;
@@ -38,35 +31,6 @@ class Recipe
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
     public function isDraft(): ?bool
     {
         return $this->draft;
@@ -75,18 +39,6 @@ class Recipe
     public function setDraft(bool $draft): static
     {
         $this->draft = $draft;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
 
         return $this;
     }
