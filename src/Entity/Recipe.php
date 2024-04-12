@@ -2,20 +2,24 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\hasDescriptionTrait;
-use App\Entity\Traits\hasIdTrait;
-use App\Entity\Traits\hasNameTrait;
+
+use App\Entity\Traits\HasDescriptionTrait;
+use App\Entity\Traits\HasIdTrait;
+use App\Entity\Traits\HasNameTrait;
 use App\Repository\RecipeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 class Recipe
 {
-
-    use hasIdTrait;
-    use hasNameTrait;
-    use hasDescriptionTrait;
+    use HasIdTrait;
+    use HasNameTrait;
+    use HasDescriptionTrait;
+    use TimestampableEntity;
     #[ORM\Column]
     private ?bool $draft = null;
 
@@ -25,11 +29,13 @@ class Recipe
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $preparation = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Step::class, orphanRemoval: true)]
+    private Collection $steps;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    public function __construct()
+    {
+        $this->steps = new ArrayCollection();
+    }
 
     public function isDraft(): ?bool
     {
@@ -67,26 +73,32 @@ class Recipe
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    /**
+     * @return Collection<int, Step>
+     */
+    public function getSteps(): Collection
     {
-        return $this->createdAt;
+        return $this->steps;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function addStep(Step $step): static
     {
-        $this->createdAt = $createdAt;
+        if (!$this->steps->contains($step)) {
+            $this->steps->add($step);
+            $step->setRecipe($this);
+        }
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function removeStep(Step $step): static
     {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
+        if ($this->steps->removeElement($step)) {
+            // set the owning side to null (unless already changed)
+            if ($step->getRecipe() === $this) {
+                $step->setRecipe(null);
+            }
+        }
 
         return $this;
     }
