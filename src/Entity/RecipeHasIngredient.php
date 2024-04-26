@@ -5,8 +5,10 @@ namespace App\Entity;
 use App\Entity\Traits\HasIdTrait;
 use App\Repository\RecipeHasIngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: RecipeHasIngredientRepository::class)]
+#[ApiResource]
 class RecipeHasIngredient
 {
     use HasIdTrait;

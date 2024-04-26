@@ -8,8 +8,10 @@ use App\Entity\Traits\HasNameTrait;
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
+#[ApiResource]
 class Image
 {
     use HasIdTrait;
