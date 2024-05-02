@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ApiResource]
@@ -20,9 +21,11 @@ class Tag
     use HasDescriptionTrait;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['get'])]
     private ?int $priority = null;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $menu = null;
 
     #[ORM\ManyToMany(targetEntity: Recipe::class, inversedBy: 'tags')]
@@ -32,6 +35,7 @@ class Tag
     private ?self $parent = null;
 
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[Groups(['get'])]
     private Collection $children;
 
     public function __construct()

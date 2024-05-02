@@ -6,6 +6,7 @@ use App\Entity\Traits\HasIdTrait;
 use App\Repository\RecipeHasIngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RecipeHasIngredientRepository::class)]
 #[ApiResource]
@@ -14,9 +15,11 @@ class RecipeHasIngredient
     use HasIdTrait;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?float $quantity = null;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $optional = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipeHasIngredients')]
@@ -24,13 +27,16 @@ class RecipeHasIngredient
     private ?Recipe $recipe = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipeHasIngredients')]
+    #[Groups(['get'])]
     private ?Unit $unit = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipeHasIngredients')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['get'])]
     private ?Ingredient $ingredient = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipeHasIngredients')]
+    #[Groups(['get'])]
     private ?IngredientGroup $ingredientGroup = null;
 
     public function getQuantity(): ?float

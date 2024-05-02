@@ -5,30 +5,48 @@ namespace App\Entity;
 use App\Entity\Traits\HasIdTrait;
 use App\Entity\Traits\HasNameTrait;
 use App\Repository\IngredientRepository;
+use App\Entity\Traits\HasTimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Patch(),
+        new Delete()
+    ]
+)]
 class Ingredient
 {
     use HasIdTrait;
     use HasNameTrait;
-    use TimestampableEntity;
+    use HasTimestampTrait;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $vegetarian = null;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $vegan = null;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $dairyFree = null;
 
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $glutenFree = null;
 
     #[ORM\OneToMany(mappedBy: 'ingredient', targetEntity: RecipeHasIngredient::class, orphanRemoval: true)]
