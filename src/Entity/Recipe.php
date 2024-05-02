@@ -6,21 +6,43 @@ namespace App\Entity;
 use App\Entity\Traits\HasDescriptionTrait;
 use App\Entity\Traits\HasIdTrait;
 use App\Entity\Traits\HasNameTrait;
+use App\Entity\Traits\HasTimestampTrait;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+// use Gedmo\Timestampable\Traits\TimestampableEntity;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: [
+            'groups' => ['get', 'Recipe:item:get'],
+        ]),        
+        new GetCollection(),
+        new Post(),
+        new Patch(),
+        new Delete()
+    ]
+)]
 class Recipe
 {
     use HasIdTrait;
     use HasNameTrait;
     use HasDescriptionTrait;
-    use TimestampableEntity;
+    use HasTimestampTrait;
+    // use TimestampableEntity;
+
     #[ORM\Column]
+    #[Groups(['get'])]
     private ?bool $draft = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
@@ -30,18 +52,23 @@ class Recipe
     private ?int $preparation = null;
 
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Step::class, orphanRemoval: true)]
+    #[Groups(['get'])]
     private Collection $steps;
 
     #[ORM\ManyToMany(targetEntity: Source::class, mappedBy: 'recipes')]
+    #[Groups(['get'])]
     private Collection $sources;
 
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Image::class, orphanRemoval: true)]
+    #[Groups(['get'])]
     private Collection $images;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'recipes')]
+    #[Groups(['get'])]
     private Collection $tags;
 
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: RecipeHasIngredient::class)]
+    #[Groups(['get'])]
     private Collection $recipeHasIngredients;
 
     public function __construct()

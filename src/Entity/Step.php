@@ -3,23 +3,28 @@
 namespace App\Entity;
 
 use App\Entity\Traits\HasIdTrait;
+use App\Entity\Traits\HasTimestampTrait;
 use App\Repository\StepRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
+#[ApiResource]
 class Step
 {
     use HasIdTrait;
-    use TimestampableEntity;
+    use HasTimestampTrait;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['get'])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['get'])]
     private ?int $priority = null;
 
     #[ORM\ManyToOne(inversedBy: 'steps')]
