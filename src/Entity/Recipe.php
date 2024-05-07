@@ -2,23 +2,22 @@
 
 namespace App\Entity;
 
-
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Entity\Traits\HasDescriptionTrait;
 use App\Entity\Traits\HasIdTrait;
 use App\Entity\Traits\HasNameTrait;
+// use Gedmo\Timestampable\Traits\TimestampableEntity;
 use App\Entity\Traits\HasTimestampTrait;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-// use Gedmo\Timestampable\Traits\TimestampableEntity;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
@@ -26,11 +25,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(normalizationContext: [
             'groups' => ['get', 'Recipe:item:get'],
-        ]),        
+        ]),
         new GetCollection(),
         new Post(),
         new Patch(),
-        new Delete()
+        new Delete(),
     ]
 )]
 class Recipe
@@ -51,22 +50,39 @@ class Recipe
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $preparation = null;
 
+    /**
+     * le tableau de la collection sera composé d'une clé en int et d'une valeur en objet Step.
+     *
+     * @var Collection<int, Step>
+     */
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Step::class, orphanRemoval: true)]
     #[Groups(['get'])]
     private Collection $steps;
 
+    /**
+     * @var Collection<int, Source>
+     */
     #[ORM\ManyToMany(targetEntity: Source::class, mappedBy: 'recipes')]
     #[Groups(['get'])]
     private Collection $sources;
 
+    /**
+     * @var Collection<int, Image>
+     */
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: Image::class, orphanRemoval: true)]
     #[Groups(['get'])]
     private Collection $images;
 
+    /**
+     * @var Collection<int, Tag>
+     */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'recipes')]
     #[Groups(['get'])]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, RecipeHasIngredient>
+     */
     #[ORM\OneToMany(mappedBy: 'recipe', targetEntity: RecipeHasIngredient::class)]
     #[Groups(['get'])]
     private Collection $recipeHasIngredients;
