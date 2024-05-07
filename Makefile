@@ -42,6 +42,12 @@ update:
 	$(EXEC) composer install
 
 # ===================== #
+#   Installe bundle     #
+# ===================== #
+bundle:
+	$(EXEC) composer require $(name)
+
+# ===================== #
 # Mise à jour base de données #
 # ===================== #
 entity:

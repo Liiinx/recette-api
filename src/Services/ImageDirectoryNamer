@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Services;
+
+use Exception;
+use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
+use Vich\UploaderBundle\Mapping\PropertyMapping;
+
+class ImageDirectoryNamer implements DirectoryNamerInterface
+{
+    /**
+     * @param Image $object
+     *
+     * @throws \Exception
+     */
+    public function directoryName($object, PropertyMapping $mapping): string
+    {
+
+        $recipe = $object->getRecipe();
+        $step = $object->getStep();
+        $directoryName = $recipe->getSlug();
+
+        if (!is_null($step)) {
+            $recipe = $step->getRecipe();
+            $directoryName .= '/' . $step->getPriority();
+        }
+
+        if(is_null($recipe)) {
+            throw new Exception("Recipe and Step must not be empty in image");
+        }
+
+        return $directoryName;
+    }
+
+}

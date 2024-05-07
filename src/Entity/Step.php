@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Entity\Traits\HasIdTrait;
 use App\Entity\Traits\HasTimestampTrait;
 use App\Repository\StepRepository;
@@ -9,7 +10,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
@@ -31,6 +31,9 @@ class Step
     #[ORM\JoinColumn(nullable: false)]
     private ?Recipe $recipe = null;
 
+    /**
+     * @var Collection<int, Image>
+     */
     #[ORM\OneToMany(mappedBy: 'step', targetEntity: Image::class, orphanRemoval: true)]
     private Collection $images;
 

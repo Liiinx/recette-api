@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Entity\Traits\HasDescriptionTrait;
 use App\Entity\Traits\HasIdTrait;
 use App\Entity\Traits\HasNameTrait;
@@ -9,7 +10,6 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -28,12 +28,18 @@ class Tag
     #[Groups(['get'])]
     private ?bool $menu = null;
 
+    /**
+     * @var Collection<int, Recipe>
+     */
     #[ORM\ManyToMany(targetEntity: Recipe::class, inversedBy: 'tags')]
     private Collection $recipes;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     private ?self $parent = null;
 
+    /**
+     * @var Collection<int, self>
+     */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     #[Groups(['get'])]
     private Collection $children;
